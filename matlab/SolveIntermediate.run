@@ -1,0 +1,47 @@
+reset;
+model NLP.mod;
+include AmplInputs/InitialGuess.INIVAL;
+option solver ipopt;
+solve;
+printf "%d\n", solve_result_num > "AmplResults/solve_result_num.txt";
+close "AmplResults/solve_result_num.txt";
+if solve_result_num >= 0 and solve_result_num < 100 then {
+    printf {i in {1..Nfe}} "%.17g\n", x[i] > "AmplResults/x.txt";
+    close "AmplResults/x.txt";
+    printf {i in {1..Nfe}} "%.17g\n", y[i] > "AmplResults/y.txt";
+    close "AmplResults/y.txt";
+    printf {i in {1..Nfe}} "%.17g\n", theta[i] > "AmplResults/theta.txt";
+    close "AmplResults/theta.txt";
+    printf {i in {1..Nfe}} "%.17g\n", v[i] > "AmplResults/v.txt";
+    close "AmplResults/v.txt";
+    printf {i in {1..Nfe}} "%.17g\n", a[i] > "AmplResults/a.txt";
+    close "AmplResults/a.txt";
+    printf {i in {1..Nfe}} "%.17g\n", phy[i] > "AmplResults/phy.txt";
+    close "AmplResults/phy.txt";
+    printf {i in {1..Nfe}} "%.17g\n", w[i] > "AmplResults/w.txt";
+    close "AmplResults/w.txt";
+    printf {i in {1..Nfe}} "%.17g\n", xf[i] > "AmplResults/xf.txt";
+    close "AmplResults/xf.txt";
+    printf {i in {1..Nfe}} "%.17g\n", yf[i] > "AmplResults/yf.txt";
+    close "AmplResults/yf.txt";
+    printf {i in {1..Nfe}} "%.17g\n", xr[i] > "AmplResults/xr.txt";
+    close "AmplResults/xr.txt";
+    printf {i in {1..Nfe}} "%.17g\n", yr[i] > "AmplResults/yr.txt";
+    close "AmplResults/yr.txt";
+    printf "%.17g\n", tf > "AmplResults/terminal_time.txt";
+    close "AmplResults/terminal_time.txt";
+    printf "%.17g\n", (tf + w_a*sum{i in {1..Nfe}}a[i]^2 + w_w*sum{i in {1..Nfe}}w[i]^2) > "AmplResults/cost.txt";
+    close "AmplResults/cost.txt";
+    printf "%.17g\n", (sum{i in {2..Nfe}}(
+(x[i] - x[i-1] - hi * v[i-1] * cos(theta[i-1]))^2 + 
+(y[i] - y[i-1] - hi * v[i-1] * sin(theta[i-1]))^2 + 
+(v[i] - v[i-1] - hi * a[i-1])^2 + 
+(theta[i] - theta[i-1] - hi * tan(phy[i-1]) * v[i-1] / L_wheelbase)^2 + 
+(phy[i] - phy[i-1] - hi * w[i-1])^2 + 
+(xf[i] - x[i] - Lfc * cos(theta[i]))^2 + 
+(yf[i] - y[i] - Lfc * sin(theta[i]))^2 + 
+(xr[i] - x[i] - Lrc * cos(theta[i]))^2 + 
+(yr[i] - y[i] - Lrc * sin(theta[i]))^2
+)) > "AmplResults/infeasibility.txt";
+    close "AmplResults/infeasibility.txt";
+}

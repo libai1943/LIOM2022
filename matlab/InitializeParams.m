@@ -1,11 +1,5 @@
 function InitializeParams()
 global params_
-params_.user.demo.enable_gif_hybrid_a_star = 0;
-params_.user.demo.enable_gif_stc = 0;
-params_.user.demo.enable_plot_intermediate_optimum = 0;
-params_.user.demo.enable_gif_liom = 0;
-params_.user.demo.enable_final_result_tiff_and_figure = 0;
-params_.user.demo.video_play_speed = 4;
 
 params_.utility.colorpool = [237,28,36; 0,162,232; 255,127,39; 218,112,214; 255,192,203; 123,104,238;0,0,255;0,0,139;119,136,153;30,144,255;70,130,180;0,191,255;0,139,139;255,102,0;0,250,154;127,255,0;154,205,50;255,215,0;205,133,63;128,0,0;0,255,255;240,128,128;255,0,0;105,105,105;169,169,169;192,192,192;0,0,0] ./ 255;
 params_.utility.ego_vehicle_rgb = [0.00, 0.45, 0.74];
@@ -31,7 +25,7 @@ params_.vehicle.phymax = 0.5;
 params_.vehicle.wmax = 0.35;
 params_.vehicle.kappa_max = tan(params_.vehicle.phymax) / params_.vehicle.lw;
 params_.vehicle.turning_radius_min = abs(1.0 / params_.vehicle.kappa_max);
-params_.vehicle.threshold_s = (params_.vehicle.vmax^2) / params_.vehicle.amax; % Is it correct?
+params_.vehicle.threshold_s = (params_.vehicle.vmax^2) / params_.vehicle.amax;
 
 params_.hybrid_astar.num_nodes_x = 125;
 params_.hybrid_astar.num_nodes_y = 125;
@@ -60,6 +54,8 @@ params_.opti.cost_w = 0.01;
 
 params_.opti.feasibility_tolerance = 0.00001;
 params_.opti.diff_tolerance = 1;
+params_.opti.penalty_multiplier = 4.0;
+params_.opti.max_iterations = 20; % Failure guard, never a convergence criterion.
 CreateCostmaps();
 end
 

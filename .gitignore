@@ -1,0 +1,22 @@
+# Runtime exchange directories must remain present.
+matlab/AmplInputs/*
+!matlab/AmplInputs/.gitkeep
+matlab/AmplResults/*
+!matlab/AmplResults/.gitkeep
+matlab/*.nl
+matlab/*.sol
+matlab/*.asv
+matlab/*.log
+matlab/*.mex*
+# Install third-party solver runtimes locally; do not redistribute them here.
+matlab/*.exe
+matlab/*.dll
+cpp/build/
+cpp/results/
+python/results/
+**/__pycache__/
+**/.venv/
+*.pyc
+*.mp4
+*.avi
+*.gif

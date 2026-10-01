@@ -125,11 +125,10 @@ is_valid = 1;
 end
 
 function WriteStcConstraints(box_edge_length, filename)
-delete(['STC_', filename]);
-fid = fopen(['STC_', filename], 'w');
+fid = fopen(fullfile('AmplInputs',['Corridor_',filename,'.txt']), 'w');
 for ii = 1 : length(box_edge_length)
     for jj = 1 : 4 % xmin, xmax, ymin, ymax
-        fprintf(fid, '%g %g %.6f \r\n', ii, jj, box_edge_length(ii, jj));
+        fprintf(fid, '%g %g %.17g \r\n', ii, jj, box_edge_length(ii, jj));
     end
 end
 fclose(fid);

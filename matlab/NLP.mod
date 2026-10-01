@@ -14,8 +14,8 @@ param w_w == BasicParameters[19];
 param r == BasicParameters[9];
 param xmin == BasicParameters[1] + r;
 param xmax == BasicParameters[2] - r;
-param ymin == BasicParameters[1] + r;
-param ymax == BasicParameters[2] - r;
+param ymin == BasicParameters[3] + r;
+param ymax == BasicParameters[4] - r;
 
 var tf >= 0.1;
 var hi = tf / (Nfe - 1);
@@ -34,11 +34,7 @@ var yf{i in {1..Nfe}};
 var xr{i in {1..Nfe}};
 var yr{i in {1..Nfe}};
 
-minimize obj: 
-tf + 
-w_a * sum{i in {1..Nfe}}(a[i]^2) + 
-w_w * sum{i in {1..Nfe}}(w[i]^2) +
-w_penalty * (sum{i in {2..Nfe}}(
+minimize obj: tf + w_a*sum{i in {1..Nfe}}a[i]^2 + w_w*sum{i in {1..Nfe}}w[i]^2 + w_penalty*(sum{i in {2..Nfe}}(
 (x[i] - x[i-1] - hi * v[i-1] * cos(theta[i-1]))^2 + 
 (y[i] - y[i-1] - hi * v[i-1] * sin(theta[i-1]))^2 + 
 (v[i] - v[i-1] - hi * a[i-1])^2 + 
@@ -48,36 +44,35 @@ w_penalty * (sum{i in {2..Nfe}}(
 (yf[i] - y[i] - Lfc * sin(theta[i]))^2 + 
 (xr[i] - x[i] - Lrc * cos(theta[i]))^2 + 
 (yr[i] - y[i] - Lrc * sin(theta[i]))^2
-)
-);
+));
 
 s.t. time_limit:
 tf <= Nfe * 0.5;
 
-s.t. EQ_init_x:
+s.t. EQ_init_x :
 x[1] = SixBoundaryValues[1];
-s.t. EQ_init_y:
+s.t. EQ_init_y :
 y[1] = SixBoundaryValues[2];
-s.t. EQ_init_theta:
+s.t. EQ_init_theta :
 theta[1] = SixBoundaryValues[3];
-s.t. EQ_init_v:
+s.t. EQ_init_v :
 v[1] = 0;
-s.t. EQ_init_phy:
+s.t. EQ_init_phy :
 phy[1] = 0;
 
-s.t. EQ_end_x:
-x[Nfe] = SixBoundaryValues[4];
-s.t. EQ_end_y:
-y[Nfe] = SixBoundaryValues[5];
-s.t. EQ_end_theta:
-theta[Nfe] = SixBoundaryValues[6];
-s.t. EQ_end_v:
+s.t. EQ_end_x :
+SixBoundaryValues[4] - 0.00000 <= x[Nfe] <= SixBoundaryValues[4] + 0.00000;
+s.t. EQ_end_y :
+SixBoundaryValues[5] - 0.00000 <= y[Nfe] <= SixBoundaryValues[5] + 0.00000;
+s.t. EQ_end_theta :
+SixBoundaryValues[6] - 0.00000 <= theta[Nfe] <= SixBoundaryValues[6] + 0.00000;
+s.t. EQ_end_v :
 v[Nfe] = 0;
-s.t. EQ_end_a:
+s.t. EQ_end_a :
 a[Nfe] = 0;
-s.t. EQ_end_phy:
+s.t. EQ_end_phy :
 phy[Nfe] = 0;
-s.t. EQ_end_w:
+s.t. EQ_end_w :
 w[Nfe] = 0;
 
 s.t. Bonds_phy {i in {2..(Nfe-1)}}:
@@ -89,17 +84,27 @@ s.t. Bonds_w {i in {1..Nfe}}:
 s.t. Bonds_a {i in {1..Nfe}}:
 -amax <= a[i] <= amax;
 
-s.t. Box_on_xf {i in {2..(Nfe-1)}}:
+s.t. Box_on_xf {i in {1..Nfe}}:
 STC_front[i,1] <= xf[i] <= STC_front[i,2];
-s.t. Box_on_yf {i in {2..(Nfe-1)}}:
+s.t. Box_on_yf {i in {1..Nfe}}:
 STC_front[i,3] <= yf[i] <= STC_front[i,4];
-s.t. Box_on_xr {i in {2..(Nfe-1)}}:
+s.t. Box_on_xr {i in {1..Nfe}}:
 STC_rear[i,1] <= xr[i] <= STC_rear[i,2];
-s.t. Box_on_yr {i in {2..(Nfe-1)}}:
+s.t. Box_on_yr {i in {1..Nfe}}:
 STC_rear[i,3] <= yr[i] <= STC_rear[i,4];
 
+# Endpoint disc centres are determined by the fixed endpoint vehicle poses.
+s.t. Fixed_xf_1: xf[1] = SixBoundaryValues[1] + Lfc*cos(SixBoundaryValues[3]);
+s.t. Fixed_xf_Nfe: xf[Nfe] = SixBoundaryValues[4] + Lfc*cos(SixBoundaryValues[6]);
+s.t. Fixed_yf_1: yf[1] = SixBoundaryValues[2] + Lfc*sin(SixBoundaryValues[3]);
+s.t. Fixed_yf_Nfe: yf[Nfe] = SixBoundaryValues[5] + Lfc*sin(SixBoundaryValues[6]);
+s.t. Fixed_xr_1: xr[1] = SixBoundaryValues[1] + Lrc*cos(SixBoundaryValues[3]);
+s.t. Fixed_xr_Nfe: xr[Nfe] = SixBoundaryValues[4] + Lrc*cos(SixBoundaryValues[6]);
+s.t. Fixed_yr_1: yr[1] = SixBoundaryValues[2] + Lrc*sin(SixBoundaryValues[3]);
+s.t. Fixed_yr_Nfe: yr[Nfe] = SixBoundaryValues[5] + Lrc*sin(SixBoundaryValues[6]);
+
 data;
-param: BasicParameters := include BasicParameters;
-param: STC_rear := include STC_rear;
-param: STC_front := include STC_fron;
-param: SixBoundaryValues := include SixBoundaryValues;
+param: BasicParameters := include AmplInputs/BasicParameters.txt;
+param: STC_rear := include AmplInputs/Corridor_rear.txt;
+param: STC_front := include AmplInputs/Corridor_fron.txt;
+param: SixBoundaryValues := include AmplInputs/BoundaryValues.txt;
