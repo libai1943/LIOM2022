@@ -1,5 +1,7 @@
 # LIOM2022 · 第五章配套代码
 
+[下载 ZIP](https://github.com/libai1943/LIOM2022/archive/refs/heads/main.zip) · [从这里开始](#安装与运行) · [阅读指南](#文件与结果) · [引用](#使用与引用)
+
 **轻量化迭代优化自主泊车 / Lightweight Iterative Optimization for Autonomous Parking**
 
 本仓库配套中文图书 **《非结构化场景自动驾驶轨迹规划技术》** 第五章《基于轻量化迭代优化的自主泊车轨迹规划鲁棒性增强方法》。请结合书中式 (5-1)～(5-4)、算法 5-1、表 5-1 和图 5-2～5-3 阅读代码。
@@ -91,6 +93,17 @@ git clone https://github.com/libai1943/LIOM2022.git
 
 默认 MA27 对应书中设置。MA27/HSL 安装方式见各目录说明；显式选择 MUMPS 时更换的是线性代数后端，模型与 LIOM 参数保持一致，但不称为表 5-1 的 MA27 复现实验。程序不会静默更换线性求解器。
 
+### 在 Python 中复算第 12 号算例
+
+在仓库根目录和已激活的 Python 环境中运行以下命令。此例显式选择 MUMPS，适合先熟悉输入、迭代过程和输出格式。
+
+```sh
+python -m pip install -r python/requirements.txt
+python python/runme.py --linear-solver mumps --no-show --output python/results_mumps
+```
+
+先看终端最后一行的 `J` 和 `T`，二者分别为名义代价和行驶时间。再打开 `python/results_mumps/trajectory.png` 对照初值和不同迭代的轨迹，用 `profiles.png` 查看最优状态与控制曲线。复核书中 MA27 的记录时，请在配置 HSL 后改用 `--linear-solver ma27` 和单独的输出目录，两组结果即可并排比较。
+
 ## 文件与结果
 
 | 文件或目录 | 作用 |
@@ -116,7 +129,7 @@ MATLAB 在工作区返回 `result`，其中 `iterations` 的列依次为迭代�
 
 使用本代码开展研究，请引用对应论文，并结合上述中文图书第五章理解方法：
 
-> Li, B., Acarman, T., Zhang, Y., et al. **Optimization-based Trajectory Planning for Autonomous Parking with Irregularly Placed Obstacles: A Lightweight Iterative Framework.** *IEEE Transactions on Intelligent Transportation Systems*, **23**(8): 11970–11981, **2022**. [IEEE 论文页面](https://ieeexplore.ieee.org/document/9344631).
+> Bai Li, Tankut Acarman, Youmin Zhang, Yakun Ouyang, Cagdas Yaman, Qi Kong, Xiang Zhong, Xiaoyan Peng. **Optimization-based Trajectory Planning for Autonomous Parking with Irregularly Placed Obstacles: A Lightweight Iterative Framework.** *IEEE Transactions on Intelligent Transportation Systems*, **23**(8): 11970–11981, **2022**. [论文 DOI](https://doi.org/10.1109/TITS.2021.3109011).
 
 卷期年份为 2022；论文于 2021 年在线发表。仓库名 LIOM2022 对应正式卷期年份。
 
